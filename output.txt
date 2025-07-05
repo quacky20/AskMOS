@@ -1,0 +1,72 @@
+Site map
+Home
+Missions
+INSAT-3DR
+INSAT-3D
+KALPANA-1
+INSAT-3A
+MeghaTropiques
+SARAL-AltiKa
+OCEANSAT-2
+OCEANSAT-3
+INSAT-3DS
+SCATSAT-1
+Catalog
+Satellite
+Insitu (AWS)
+RADAR
+Galleries
+Satellite Products
+Weather Forecast
+Ocean Forecast
+RADAR (DWR)
+Global Ocean Current
+Data Access
+Order Data
+Open Data
+Atmosphere
+Bayesian based MT-SAPHIR rainfall
+GPS derived Integrated water vapour
+GSMap ISRO Rain
+METEOSAT8 Cloud Properties
+Land
+3D Volumetric TERLS DWRproduct
+Inland Water Height
+River Discharge
+Soil Moisture
+Ocean
+Global Ocean Surface Current
+High Resolution Sea Surface Salinity
+Indian Mainland Coastal Product
+Ocean Subsurface
+Oceanic Eddies Detection
+Sea Ice Occurrence Probability
+Wave based Renewable Energy
+Cal-Val
+Forecast
+RSS Feeds
+Reports
+Calibration
+Insitu
+Relative
+Validation
+Data Quality
+Weather
+Atlases
+Tools
+Sitemap
+Help
+Feedback
+About Us
+Contact Us
+Copyright Policy
+Data Access Policy
+Hyperlink Policy
+Privacy Policy
+Website Policies
+Terms & Conditions
+FAQs
+SignUp
+Login
+Logout
+['/', '#', '/insat-3dr', '/insat-3d', '/kalpana-1', '/insat-3a', '/megha-tropiques', '/saral-altika', '/oceansat-2', '/oceansat-3', '/insat-3ds', '/scatsat-1', '#', '/internal/catalog-satellite', '/internal/catalog-insitu', '/internal/catalog-radar', '#', '/internal/gallery', '/internal/gallery/weather', '/internal/gallery/ocean', '/internal/gallery/dwr', '/internal/gallery/current', '#', '/internal/uops', '#', '#', '/bayesian-based-mt-saphir-rainfall', '/gps-derived-integrated-water-vapour', '/gsmap-isro-rain', '/meteosat8-cloud-properties', '#', '/3d-volumetric-terls-dwrproduct', '/inland-water-height', '/river-discharge', '/soil-moisture-0', '#', '/global-ocean-surface-current', '/high-resolution-sea-surface-salinity', '/indian-mainland-coastal-product', '/ocean-subsurface', '/oceanic-eddies-detection', '/sea-ice-occurrence-probability', '/wave-based-renewable-energy', '/internal/calval-data', '/internal/forecast-menu', '/rss-feed', '#', '#', '/insitu', '/calibration-reports', '/validation-reports', '/data-quality', '/weather-reports', '/atlases', '/tools', '/sitemap', '/help', '/mosdac-feedback', '/about-us', '/contact-us', '/copyright-policy', '/data-access-policy', '/hyperlink-policy', '/privacy-policy', '/website-policies', '/terms-conditions', '/faq-page', '/internal/registration', '/internal/uops', '/internal/logout']
