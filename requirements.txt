@@ -3,3 +3,9 @@ bs4
 python-dotenv
 groq
 neo4j
+langchain
+langchain_groq
+tiktoken
+streamlit
+matplotlib
+networkx
