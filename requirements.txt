@@ -5,4 +5,9 @@ groq
 neo4j
 streamlit
 plotly
+langchain
+langchain_groq
+tiktoken
+streamlit
+matplotlib
 networkx
