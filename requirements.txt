@@ -3,3 +3,6 @@ bs4
 python-dotenv
 groq
 neo4j
+streamlit
+plotly
+networkx
