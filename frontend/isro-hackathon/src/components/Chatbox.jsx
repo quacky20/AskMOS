@@ -52,7 +52,7 @@ function Chatbox() {
     <div className="h-[70vh] flex flex-col bg-slate-800/50 rounded-xl border border-cyan-500/30 shadow-2xl shadow-cyan-500/10 backdrop-blur-sm">
       <div className="p-4 border-b border-cyan-500/30 bg-gradient-to-r from-slate-800/80 to-slate-700/80 rounded-t-xl">
         <h2 className="text-xl font-semibold text-cyan-400 flex items-center space-x-2">
-          <Globe className="w-5 h-5 animate-spin-slow" />
+          <Globe className="w-5 h-5" />
           <span>Satellite Data Assistant</span>
         </h2>
       </div>
@@ -113,7 +113,7 @@ function Chatbox() {
           <button
             onClick={handleSendMessage}
             disabled={isLoading}
-            className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-4 py-2 rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40"
+            className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-4 py-2 rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40"
           >
             <Send className="w-4 h-4" />
           </button>

@@ -13,9 +13,9 @@ function KnowledgeGraph() {
         // Simulate loading graph from backend
         setTimeout(() => {
             // In real implementation, this would be the URL to your generated HTML file
-            // setGraphUrl('/api/graph.html');
+            setGraphUrl('/neo4j_graph.html');
             setIsLoading(false);
-            setError("Graph will load here when connected to your Flask backend");
+            // setError("Graph will load here when connected to your Flask backend");
         }, 1000);
     };
 
@@ -30,7 +30,7 @@ function KnowledgeGraph() {
                     <button
                         onClick={loadGraph}
                         disabled={isLoading}
-                        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 text-sm"
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 text-sm"
                     >
                         {isLoading ? 'Loading...' : 'Load Graph'}
                     </button>
@@ -58,6 +58,8 @@ function KnowledgeGraph() {
                         src={graphUrl}
                         className="w-full h-full rounded-b-xl"
                         title="Knowledge Graph"
+                        onLoad={() => {setIsLoading(false)}}
+                        scrolling='no'
                     />
                 ) : (
                     <div className="flex items-center justify-center h-full">
