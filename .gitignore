@@ -1,6 +1,5 @@
-/mosdac_scraped
+/data/mosdac_scraped
 .env
-/python_frontend
 
 __pycache__/
 *.pyc
