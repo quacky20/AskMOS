@@ -12,3 +12,4 @@ streamlit
 matplotlib
 networkx
 flask
+pyvis
