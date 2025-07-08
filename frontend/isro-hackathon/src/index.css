@@ -1,21 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap');
 @import "tailwindcss";
-
-/* @theme {
-  --color-primary: #142A61;
-  --color-secondary: #1D2124;
-}
-
-.gabarito-font {
-  font-family: "Gabarito", sans-serif;
-}
-
-html, body {
-  padding: 0;
-  margin: 0;
-  box-sizing: none;
-  overflow: hidden;
-} */
 
 html {
   scrollbar-width: none;

@@ -7,7 +7,7 @@ load_dotenv()
 
 class GraphRAG:
     def __init__(self):
-        self.llm = ChatGroq(groq_api_key=os.getenv("GROQ_API_KEY"), model_name="meta-llama/llama-4-maverick-17b-128e-instruct")
+        self.llm = ChatGroq(groq_api_key=os.getenv("GROQ_API_KEY"), model_name="meta-llama/llama-4-maverick-17b-128e-instruct", temperature=0.1)
         self.driver = GraphDatabase.driver(
             os.getenv("NEO4J_URI"),
             auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD"))
