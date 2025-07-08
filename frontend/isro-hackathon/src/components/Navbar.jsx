@@ -10,7 +10,7 @@ function Navbar({ currentPage, setCurrentPage }) {
                         <div className="flex items-center space-x-3">
                             <Satellite className="w-8 h-8 text-cyan-400 animate-pulse" />
                             <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                                MOSDAC
+                                AskMOS
                             </h1>
                         </div>
                         <div className="flex items-center space-x-8">
