@@ -1,4 +1,6 @@
-# 🚀 AskMOS
+<p align="center">
+  <img src="assets/logo.png" alt="AskMOS Logo" width="150"/>
+</p>
 
 **An intelligent, space-themed assistant that scrapes data from [MOSDAC](https://mosdac.gov.in/), builds a knowledge graph, and answers your queries with the power of LLMs and Neo4j.**
 
