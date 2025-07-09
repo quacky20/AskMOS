@@ -13,3 +13,7 @@ matplotlib
 networkx
 flask
 pyvis
+chromadb
+sentence-transformers
+flask-cors
+langchain-huggingface
