@@ -101,23 +101,24 @@ Users can interact with an intelligent chatbot to ask questions about the scrape
 
 ```
 ├── backend/
-│ ├── backend.py
-│ ├── backend_with_faiss.py
-│ └── .env.example
-├── data/
-│ └── *.py # Web scraping and triplet extraction
-│ └── .env.example
+│   ├── RAG/                        # Retrieval-Augmented Generation logic
+│   ├── faiss_index/               # FAISS index files used by the backend
+│   │   ├── index.faiss
+│   │   └── index.pkl
+│   ├── data/                      # Web scraping + triplet extraction scripts
+│   │   ├── *.py                   # Custom data processing scripts
+│   │   └── .env.example           # Env example for data-specific needs
+│   ├── backend.py                 # Flask app (main entry point)
+│   ├── backend_with_faiss.py      # Alternate backend script (uses FAISS)
+│   ├── requirements.txt           # Python dependencies
+│   └── .env.example               # Env variables example for the backend
 ├── frontend/
-│ └── isro-hackathon/ # React + Tailwind frontend
+│   └── isro-hackathon/            # React + Tailwind frontend code
 ├── assets/
-│ └── logo.png # Project logo
+│   └── logo.png                   # Project logo
 ├── screenshots/
-│ └── *.png # UI screenshots
-├── faiss_index/
-│ ├── index.faiss
-│ └── index.pkl
-├── requirements.txt
-└── README.md
+│   └── *.png                      # UI screenshots or mockups
+└── README.md                     # Project documentation
 ```
 
 ---
