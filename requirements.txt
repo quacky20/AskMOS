@@ -13,3 +13,6 @@ matplotlib
 networkx
 flask
 pyvis
+scikit-learn
+langchain-community
+sentence-transformers
