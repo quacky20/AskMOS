@@ -20,3 +20,4 @@ chromadb
 sentence-transformers
 flask-cors
 langchain-huggingface
+faiss-cpu
