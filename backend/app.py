@@ -1,141 +1,84 @@
 import streamlit as st
-import networkx as nx
-import matplotlib.pyplot as plt
-from neo4j import GraphDatabase
-from langchain_groq import ChatGroq
-import os
-from dotenv import load_dotenv
-import json
+from RAG.graph_query_engine import GraphRAG
+from RAG.semantic_rag.retriever_engine import SemanticRAG
 
-# Load environment variables
-load_dotenv()
+# Initialize RAG Engines
+graph_rag = GraphRAG()
+semantic_rag = SemanticRAG()
 
-# Setup Neo4j & LLM
-NEO4J_URI = os.getenv("NEO4J_URI")
-NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+# UI Setup
+st.set_page_config(page_title="Smart RAG Assistant", layout="wide")
+st.title("🧠 Smart AI Help Bot")
 
-driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
-llm = ChatGroq(groq_api_key=GROQ_API_KEY, model_name="meta-llama/llama-4-maverick-17b-128e-instruct")
+user_query = st.text_input("Ask your question here:")
 
-def generate_cypher(nl_query):
-    prompt = f"""
-You are a Cypher expert. Convert the following natural language question into a single valid Cypher query.
+if st.button("Get Answer") and user_query:
+    st.markdown("### 💡 Answer")
 
-Only output the query — do NOT add explanation, markdown, or commentary.
+    graph_answer, semantic_answer = None, None
+    errors = []
 
-- Node Label: Entity
-- Relationship: RELATES with a property `type`
-
-Question: {nl_query}
-"""
-    response = llm.predict(prompt).strip()
-
-    # If the model added extra text, try to extract only code
-    for line in response.splitlines():
-        if line.strip().startswith("MATCH"):
-            return response.strip()  # Assume full query is usable
-    return ""  # If nothing usable, return empty
-
-def run_cypher(cypher_query):
-    with driver.session() as session:
-        result = session.run(cypher_query)
-        return [record.data() for record in result]
-
-def generate_answer(question, graph_data):
+    # Try Graph RAG
     try:
-        trimmed = graph_data[:5]
-        graph_summary = json.dumps(trimmed, indent=2)
-
-        prompt = f"""
-You are an AI assistant helping users answer questions based on knowledge graph data.
-
-Here is the user's question:
-{question}
-
-And here is relevant graph data (first 5 entries):
-{graph_summary}
-
-Based on the graph data, provide a direct and concise answer to the question above.
-"""
-
-        answer = llm.predict(prompt).strip()
-        return answer if answer else "Sorry, I couldn't generate an answer from the current data."
-
+        graph_answer = graph_rag.process_query(user_query)
     except Exception as e:
-        return f"⚠️ Error generating answer: {str(e)}"
+        errors.append(f"Graph RAG failed: {e}")
 
-def draw_subgraph(entity_name, depth=2):
-    G = nx.DiGraph()
-
+    # Try Semantic RAG
     try:
-        with driver.session() as session:
-            query = f"""
-            MATCH path = (start:Entity {{name: $entity_name}})-[*1..{depth}]-(connected)
-            RETURN path
-            """
-            results = session.run(query, entity_name=entity_name)
-
-            for record in results:
-                path = record["path"]
-                for rel in path.relationships:
-                    s = rel.start_node["name"]
-                    o = rel.end_node["name"]
-                    r = rel["type"]
-                    G.add_node(s)
-                    G.add_node(o)
-                    G.add_edge(s, o, label=r)
-
-        pos = nx.spring_layout(G, k=0.5)
-        edge_labels = nx.get_edge_attributes(G, 'label')
-
-        fig, ax = plt.subplots(figsize=(10, 6))
-        nx.draw(G, pos, with_labels=True, node_size=2000, node_color="skyblue", font_size=10, font_weight="bold", ax=ax)
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red', ax=ax)
-        return fig
-
+        semantic_answer = semantic_rag.process_query(user_query)
     except Exception as e:
-        st.warning(f"⚠️ Could not draw subgraph for '{entity_name}': {e}")
-        return None
+        errors.append(f"Semantic RAG failed: {e}")
 
-# Streamlit UI
-st.set_page_config(page_title="Graph-RAG QA", layout="wide")
-st.title("🧠 Graph-RAG Help Bot (MOSDAC)")
+    # Decision Logic
+    if graph_answer and not semantic_answer:
+        st.markdown("#### 📊 From Graph RAG")
+        st.success(graph_answer)
 
-query = st.text_input("Ask a question related to MOSDAC data", "")
+    elif semantic_answer and not graph_answer:
+        st.markdown("#### 📄 From Semantic RAG")
+        st.success(semantic_answer)
 
-if query:
-    with st.spinner("🔍 Generating Cypher query..."):
-        cypher = generate_cypher(query)
-    st.code(cypher, language="cypher")
+    elif graph_answer and semantic_answer:
+        combined_prompt = f"""
+You are an intelligent assistant helping a user by combining structured data from a knowledge graph and unstructured data from semantic retrieval.
 
-    with st.spinner("🧠 Querying Neo4j..."):
-        result = run_cypher(cypher)
+User Query: {user_query}
 
-    if result:
-        st.success("✅ Graph data retrieved!")
+Answer from Knowledge Graph:
+{graph_answer}
 
-        # st.subheader("📊 Query Results")
-        # st.dataframe(result)
+Answer from Semantic Retrieval:
+{semantic_answer}
 
-        with st.spinner("💬 Generating final answer..."):
-            final_answer = generate_answer(query, result)
-        st.subheader("🗨️ Final Answer")
-        if final_answer.startswith("⚠️"):
-            st.warning(final_answer)
-        else:
+Provide a clear, helpful, and final response to the user:
+"""
+        try:
+            final_answer = semantic_rag.llm.invoke(combined_prompt).content.strip()
+            st.markdown("#### 🔁 Combined RAG Answer")
             st.success(final_answer)
+        except Exception as e:
+            errors.append(f"Final LLM generation failed: {e}")
+            st.markdown("#### ⚠️ Partial Combined Results")
+            st.markdown("**📊 Graph RAG:**")
+            st.info(graph_answer)
+            st.markdown("**📄 Semantic RAG:**")
+            st.info(semantic_answer)
 
-        st.subheader("🕸️ Subgraph Visualization")
-        entity_default = ""
-        if result and list(result[0].values()):
-            entity_default = str(list(result[0].values())[0])
-        entity = st.text_input("Entity to visualize:", value=entity_default)
-
-        if entity.strip():
-            fig = draw_subgraph(entity.strip(), depth=2)
-            if fig:
-                st.pyplot(fig)
     else:
-        st.warning("⚠️ No data found in the graph for this query.")
+        st.error("❌ No answer could be generated from either system.")
+        for err in errors:
+            st.warning(err)
+
+    # Optional Debug Output
+    with st.expander("🛠 Debug Info"):
+        st.markdown("**Graph RAG Raw Output**")
+        st.code(graph_answer if graph_answer else "No answer from Graph RAG.", language="markdown")
+
+        st.markdown("**Semantic RAG Raw Output**")
+        st.code(semantic_answer if semantic_answer else "No answer from Semantic RAG.", language="markdown")
+
+        if errors:
+            st.markdown("**Errors:**")
+            for err in errors:
+                st.error(err)

@@ -16,3 +16,7 @@ pyvis
 scikit-learn
 langchain-community
 sentence-transformers
+chromadb
+sentence-transformers
+flask-cors
+langchain-huggingface
