@@ -29,6 +29,7 @@ Users can interact with an intelligent chatbot to ask questions about the scrape
 - Groq (Meta LLaMA via API)
 - SentenceTransformers (HuggingFace)
 - Python-Dotenv
+- ChromaDB
 - Flask-CORS
 
 ### 📊 Data Processing & Visualization
