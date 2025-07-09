@@ -15,6 +15,9 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+allowed_origin = os.getenv("FRONTEND_URL")
+CORS(app, origins=[allowed_origin] if allowed_origin else "*")
+
 NEO4J_URI = os.getenv("NEO4J_URI")
 NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
