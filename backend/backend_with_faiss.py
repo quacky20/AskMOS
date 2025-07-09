@@ -20,7 +20,8 @@ NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-FAISS_INDEX_PATH = "faiss_index"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FAISS_INDEX_PATH = os.path.join(BASE_DIR, "faiss_index")
 
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 llm = ChatGroq(

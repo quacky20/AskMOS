@@ -1,4 +1,4 @@
-/data/mosdac_scraped
+backend/data/mosdac_scraped
 .env
 
 __pycache__/
