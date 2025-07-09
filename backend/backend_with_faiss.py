@@ -38,11 +38,9 @@ relationship_cache = {}
 import os
 
 def initialize_vector_store(force_rebuild=False):
-    """Initialize or load FAISS vector store from disk"""
     global vector_store, entity_cache, relationship_cache
 
     try:
-        # If index exists and not forcing rebuild, load it
         if os.path.exists(FAISS_INDEX_PATH) and not force_rebuild:
             print("Loading FAISS index from disk...")
             vector_store = FAISS.load_local(FAISS_INDEX_PATH, embeddings, allow_dangerous_deserialization=True)
@@ -51,7 +49,6 @@ def initialize_vector_store(force_rebuild=False):
         
         print("Building FAISS index from Neo4j...")
 
-        # Fetch from Neo4j
         entities = get_all_entities()
         entity_cache = {entity['name'].lower(): entity for entity in entities}
 
@@ -78,7 +75,6 @@ def initialize_vector_store(force_rebuild=False):
             vector_store = FAISS.from_documents(documents, embeddings)
             print(f"Vector store initialized with {len(documents)} documents")
 
-            # Save to disk
             vector_store.save_local(FAISS_INDEX_PATH)
             print("FAISS index saved to disk.")
         else:
@@ -118,8 +114,7 @@ Query: {query}
 Entities:"""
     
     response = llm.invoke(prompt).content.strip()
-    
-    # Clean and split the response
+
     entities = []
     for entity in response.split(','):
         entity = entity.strip().strip('"').strip("'")
@@ -129,11 +124,9 @@ Entities:"""
     return entities
 
 def find_matching_entities(extracted_entities: List[str]) -> List[Dict]:
-    """Find matching entities in the knowledge graph"""
     matched_entities = []
     
     for entity in extracted_entities:
-        # Direct match
         if entity.lower() in entity_cache:
             matched_entities.append({
                 "original": entity,
@@ -142,7 +135,6 @@ def find_matching_entities(extracted_entities: List[str]) -> List[Dict]:
                 "confidence": 1.0
             })
         else:
-            # Semantic search for similar entities
             search_results = semantic_search(entity, k=3)
             for result in search_results:
                 if result["type"] == "entity":
@@ -162,7 +154,6 @@ def semantic_search(query: str, k: int = 10) -> List[Dict]:
         return []
     
     try:
-        # Search for relevant documents
         docs = vector_store.similarity_search(query, k=k)
         
         results = []
@@ -180,14 +171,11 @@ def semantic_search(query: str, k: int = 10) -> List[Dict]:
         return []
 
 def execute_query_with_proper_fallback(query: str, matched_entities: List[Dict]) -> tuple:
-    """Execute query with proper fallback logic"""
     with driver.session() as session:
         
-        # If we have matched entities, try to find their relationships
         if matched_entities:
             entity_name = matched_entities[0]["matched"]
             
-            # Try to get all relationships for this entity
             relationship_query = f"""
             MATCH (n)-[r]-(m) 
             WHERE toLower(n.name) = toLower('{entity_name}') 
@@ -206,7 +194,6 @@ def execute_query_with_proper_fallback(query: str, matched_entities: List[Dict])
                 else:
                     print(f"No relationships found for {entity_name}, checking if entity exists...")
                     
-                    # Check if entity exists but has no relationships
                     entity_query = f"""
                     MATCH (n) 
                     WHERE toLower(n.name) = toLower('{entity_name}') 
@@ -228,12 +215,10 @@ def execute_query_with_proper_fallback(query: str, matched_entities: List[Dict])
                 return get_all_relationships(session)
         
         else:
-            # No matched entities found, return all relationships
             print("No matched entities found, returning all relationships")
             return get_all_relationships(session)
 
 def get_all_relationships(session):
-    """Get all relationships from the graph"""
     try:
         all_relationships_query = """
         MATCH (n)-[r]->(m) 
@@ -257,12 +242,10 @@ def get_all_relationships(session):
         return [], "error"
 
 def generate_answer(question: str, graph_data: List[Dict], query_type: str) -> str:
-    """Generate answer based on the query type and data"""
-    
+
     if not graph_data:
         return "No data found in the knowledge graph."
-    
-    # Limit data to avoid token limits
+
     limited_data = graph_data[:10]
     
     try:
@@ -271,7 +254,6 @@ def generate_answer(question: str, graph_data: List[Dict], query_type: str) -> s
         graph_json = str(limited_data)
     
     if query_type == "entity_relationships":
-        # Entity found with relationships - answer directly from graph data
         prompt = f"""
 Based on the knowledge graph data below, answer the user's question directly and concisely.
 
@@ -290,7 +272,6 @@ Instructions:
 Answer:"""
 
     elif query_type == "entity_no_relationships":
-        # Entity exists but has no relationships
         prompt = f"""
 The entity from the user's question exists in the knowledge graph but has no relationships with other entities.
 
@@ -304,7 +285,6 @@ Provide a brief response indicating that the entity exists but has no connection
 Answer:"""
 
     elif query_type == "all_relationships":
-        # No specific entity found, showing all relationships
         prompt = f"""
 The user asked about something not specifically found in the knowledge graph. Here are the available relationships in the knowledge graph:
 
@@ -321,7 +301,6 @@ Instructions:
 Answer:"""
 
     else:
-        # Fallback
         prompt = f"""
 Answer the user's question based on the available knowledge graph data:
 
@@ -348,22 +327,17 @@ def ask():
         if not query:
             return jsonify({"error": "Query is required"}), 400
         
-        # Initialize vector store if not already done
         if not vector_store:
             initialize_vector_store()
         
-        # Step 1: Extract entities from query
         extracted_entities = extract_entities_from_query(query)
         print(f"Extracted entities: {extracted_entities}")
         
-        # Step 2: Find matching entities in knowledge graph
         matched_entities = find_matching_entities(extracted_entities)
         print(f"Matched entities: {matched_entities}")
         
-        # Step 3: Execute query with proper fallback logic
         result, query_type = execute_query_with_proper_fallback(query, matched_entities)
         
-        # Step 4: Generate answer based on query type
         final_answer = generate_answer(query, result, query_type)
         
         return jsonify({
@@ -390,6 +364,5 @@ def refresh_vector_store():
         return jsonify({"error": f"Error refreshing vector store: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    # Initialize vector store on startup
     initialize_vector_store()
     app.run(debug=True)

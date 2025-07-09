@@ -23,12 +23,13 @@ Users can interact with an intelligent chatbot to ask questions about the scrape
 
 ### ⚙️ Backend
 - Flask
-- Streamlit (for local graph visualization)
 - LangChain, LangChain-Groq
-- Neo4j
+- Neo4j (graph database)
+- FAISS (semantic vector search)
 - Groq (Meta LLaMA via API)
-- Tiktoken, HuggingFace Transformers
+- SentenceTransformers (HuggingFace)
 - Python-Dotenv
+- Flask-CORS
 
 ### 📊 Data Processing & Visualization
 - BeautifulSoup (bs4)
@@ -45,7 +46,8 @@ Users can interact with an intelligent chatbot to ask questions about the scrape
 
 ### 🧰 Tools
 - Git
-- Vite
+- Vercel (frontend hosting)
+- Render (backend hosting)
 
 ---
 
@@ -53,11 +55,12 @@ Users can interact with an intelligent chatbot to ask questions about the scrape
 
 - 🌐 **Query the MOSDAC website** using natural language
 - 🧠 **AI-powered assistant** backed by Groq-hosted Meta LLaMA models via LangChain agents
-- 🧵 **Dynamic knowledge graph** visualization using Neo4j and Pyvis
+- 🧵 **Dynamic knowledge graph** using Neo4j and Pyvis
 - 🛰️ **Scraping & triplet extraction** from live site content
+- 🔍 **Semantic search** on entities/relationships via FAISS vector store
 - ⚡ **Responsive space-themed UI** built with React and Tailwind
-- 🔍 **Automatic Cypher query generation** and interpretation
-- 🔄 Real-time agent interaction and answer generation pipeline
+- 🔄 **Automatic Cypher query generation** and answer summarization
+- 🧠 **LLM-powered entity extraction and semantic fallback logic**
 
 ---
 
@@ -80,14 +83,16 @@ Users can interact with an intelligent chatbot to ask questions about the scrape
 
 ## 🧱 Architecture Overview
 
+
 1. **Scraper**: BeautifulSoup collects data from MOSDAC.
-2. **Triplet Extractor**: Groq-hosted Meta LLaMA model extracts `(subject, predicate, object)` triplets.
-3. **Graph Storage**: Triplets are stored in a Neo4j graph database.
-4. **Query Engine**:
-   - LangChain agent turns user question into a Cypher query.
-   - Another agent interprets the Cypher query result and generates a response.
-5. **Visualization**: The knowledge graph is visualized and rendered for the user.
-6. **Frontend**: The React app serves a clean, interactive, and themed UI.
+2. **Triplet Extractor**: Groq-hosted Meta LLaMA extracts `(subject, predicate, object)` triplets.
+3. **Graph Storage**: Triplets are stored in a Neo4j database.
+4. **Vector Store**: All entities and relationships are embedded and stored in FAISS for semantic search.
+5. **Query Engine**:
+   - LangChain agent turns user questions into Cypher queries.
+   - Another agent interprets the results and generates natural responses.
+6. **Visualization**: The knowledge graph is rendered using Pyvis and NetworkX.
+7. **Frontend**: The React app provides a sleek, space-themed UI.
 
 ---
 
@@ -95,13 +100,23 @@ Users can interact with an intelligent chatbot to ask questions about the scrape
 
 ```
 ├── backend/
-│ └── backend.py # Flask API backend
+│ ├── backend.py
+│ ├── backend_with_faiss.py
+│ └── .env.example
 ├── data/
-│ └── *.py # Web scraping and triplet generation scripts
+│ └── *.py # Web scraping and triplet extraction
+│ └── .env.example
 ├── frontend/
 │ └── isro-hackathon/ # React + Tailwind frontend
-├── .env.example # Example environment variables
-├── README.md # This file
+├── assets/
+│ └── logo.png # Project logo
+├── screenshots/
+│ └── *.png # UI screenshots
+├── faiss_index/
+│ ├── index.faiss
+│ └── index.pkl
+├── requirements.txt
+└── README.md
 ```
 
 ---
@@ -126,6 +141,9 @@ cd backend
 python -m venv venv
 source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 pip install -r requirements.txt
+
+# Run the updated backend
+python backend_with_faiss.py
 ```
 
 ### 3. Setup React frontend
